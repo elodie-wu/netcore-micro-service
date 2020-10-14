@@ -1,0 +1,14 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>MicroService.Basic.API</name>
+    </assembly>
+    <members>
+        <member name="M:MicroService.Basic.API.Controllers.WeatherForecastController.Get">
+            <summary>
+            测试注释
+            </summary>
+            <returns></returns>
+        </member>
+    </members>
+</doc>
