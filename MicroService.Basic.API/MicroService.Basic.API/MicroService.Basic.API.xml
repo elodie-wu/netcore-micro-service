@@ -4,9 +4,23 @@
         <name>MicroService.Basic.API</name>
     </assembly>
     <members>
+        <member name="M:MicroService.Basic.API.Controllers.AuthController.GetToken(System.String,System.String)">
+            <summary>
+            
+            </summary>
+            <param name="username"></param>
+            <param name="password"></param>
+            <returns></returns>
+        </member>
         <member name="M:MicroService.Basic.API.Controllers.WeatherForecastController.Get">
             <summary>
             测试注释
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:MicroService.Basic.API.Controllers.WeatherForecastController.GetValues">
+            <summary>
+            测试jwt
             </summary>
             <returns></returns>
         </member>
