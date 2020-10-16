@@ -7,10 +7,7 @@
   <ItemGroup>
     <Folder Include="Application\" />
     <Folder Include="Abstraction\" />
-    <Folder Include="Domain\DBContext\" />
     <Folder Include="Domain\IRepository\" />
-    <Folder Include="Domain\Infrastructure\" />
-    <Folder Include="Domain\Entity\" />
     <Folder Include="DTO\" />
     <Folder Include="Repository\" />
   </ItemGroup>

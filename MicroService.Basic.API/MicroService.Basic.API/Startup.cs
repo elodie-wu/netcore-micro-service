@@ -4,18 +4,21 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MicroService.Basic.Data.DBContext;
 using MicroService.Common.JWT;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using MySql.Data.EntityFrameworkCore.Extensions;
 using Swashbuckle.AspNetCore.Filters;
 
 namespace MicroService.Basic.API
@@ -33,6 +36,14 @@ namespace MicroService.Basic.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            #region efcore
+
+            services.AddEntityFrameworkMySQL().AddDbContext<BasicDBContext>((serviceProvider, options) =>
+            {
+                options.UseMySql(Configuration.GetSection("DbConfig:Mysql:ConnectionString").Value);
+            });
+            #endregion
 
             #region swagger 
 
@@ -58,15 +69,12 @@ namespace MicroService.Basic.API
             });
             #endregion
 
-            #region jwt官方认证
-            //出现401说明配置对了
-            //这个是认证
+            #region jwt官方认证 
             var audienceConfig = Configuration.GetSection("Audience"); 
             var symmetricKeyAsBase64 = "asjdhfjkasdhkflhkashd";
             var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
             var signingKey = new SymmetricSecurityKey(keyByteArray);  
-
-            // 令牌验证参数
+             
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true, 
@@ -75,8 +83,7 @@ namespace MicroService.Basic.API
                 ValidIssuer = audienceConfig["Issuer"],//发行人
                 ValidateAudience = true, 
                 ValidAudience = audienceConfig["Audience"],//订阅人
-                ValidateLifetime = true, 
-                ClockSkew = TimeSpan.FromSeconds(30),//注意这是缓冲过期时间，总的有效时间等于这个时间加上jwt的过期时间，如果不配置，默认是5分钟
+                ValidateLifetime = true,  
                 RequireExpirationTime = true,
             }; 
 
@@ -87,8 +94,7 @@ namespace MicroService.Basic.API
                  o.Events = new JwtBearerEvents
                  {
                      OnAuthenticationFailed = context =>
-                     {
-                         // 如果过期，则把<是否过期>添加到，返回头信息中
+                     { 
                          if (context.Exception.GetType() == typeof(SecurityTokenExpiredException))
                          {
                              context.Response.Headers.Add("Token-Expired", "true");
