@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace MicroService.Basic.Domain.Entity
+namespace MicroService.Basic.DTO.Req
 {
-    public class User
+    public class UserInfoReq:ReqBase
     {
-        public string Id { get; set; }
+        public string ID { get; set; }
         public string Name { get; set; }
     }
 }

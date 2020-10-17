@@ -18,6 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.9.10" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="5.6.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="6.0.1" />
@@ -26,6 +27,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MicroService.Basic.Data\MicroService.Basic.Data.csproj" />
+    <ProjectReference Include="..\MicroService.Basic\MicroService.Basic.csproj" />
     <ProjectReference Include="..\MicroService.Common\MicroService.Common.csproj" />
   </ItemGroup>
 

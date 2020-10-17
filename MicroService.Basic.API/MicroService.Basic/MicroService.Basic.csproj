@@ -5,11 +5,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Application\" />
-    <Folder Include="Abstraction\" />
-    <Folder Include="Domain\IRepository\" />
-    <Folder Include="DTO\" />
-    <Folder Include="Repository\" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.9" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MicroService.Basic.Data\MicroService.Basic.Data.csproj" />
   </ItemGroup>
 
 </Project>

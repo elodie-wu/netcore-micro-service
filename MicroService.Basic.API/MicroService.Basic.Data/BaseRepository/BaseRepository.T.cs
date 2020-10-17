@@ -43,10 +43,10 @@ namespace MicroService.Basic.Data
             return await _dbContext.Set<TEntity>().FirstOrDefaultAsync(predicate);
         }
 
-        public async Task<int> InsertAsync(TEntity entity)
+        public async Task<bool> InsertAsync(TEntity entity)
         {
             _dbContext.Add(entity);
-            return await _dbContext.SaveChangesAsync();
+            return await _dbContext.SaveChangesAsync() > 0;
         }
 
         public Task<int> InsertAsync(List<TEntity> entities)
@@ -66,17 +66,19 @@ namespace MicroService.Basic.Data
             return _dbContext.Set<TEntity>().Where(predicate);
         }
 
-        public async Task<int> UpdateAsync(TEntity entity)
+        public async Task<bool> UpdateAsync(TEntity entity)
         {
-            _dbContext.Update(entity);
-            return await _dbContext.SaveChangesAsync(); 
+            _dbContext.Update(entity); 
+            return await _dbContext.SaveChangesAsync() > 0;
         }
 
-        public async Task<List<TEntity>> FindListAsync(Pagination pagination)
+        public async Task<Paging<TEntity>> FindListAsync(PaginationReq pagination)
         {
-            bool isAsc = pagination.isAsc;
+            bool isAsc = pagination.IsAsc;
             string[] _order = pagination.Sidx.Split(',');
             MethodCallExpression resultExp = null;
+            var result = new Paging<TEntity>();
+
             var tempData = _dbContext.Set<TEntity>().AsQueryable();
             foreach (string item in _order)
             {
@@ -95,17 +97,24 @@ namespace MicroService.Basic.Data
                 var orderByExp = Expression.Lambda(propertyAccess, parameter);
                 resultExp = Expression.Call(typeof(Queryable), isAsc ? "OrderBy" : "OrderByDescending", new Type[] { typeof(TEntity), property.PropertyType }, tempData.Expression, Expression.Quote(orderByExp));
             }
-            tempData = tempData.Provider.CreateQuery<TEntity>(resultExp);
-            pagination.TotalCount = tempData.Count();
+            tempData = tempData.Provider.CreateQuery<TEntity>(resultExp);  
             tempData = tempData.Skip(pagination.PageSize * (pagination.PageIndex - 1)).Take(pagination.PageSize).AsQueryable();
-            return await tempData.ToListAsync();
+
+            result.TotalCount = tempData.Count();
+            result.List = await tempData.ToListAsync();
+            result.PageIndex = pagination.PageIndex;
+            result.PageSize = pagination.PageSize;
+
+            return result;
         }
 
-        public async Task<List<TEntity>> FindListAsync(Expression<Func<TEntity, bool>> predicate, Pagination pagination)
+        public async Task<Paging<TEntity>> FindListAsync(Expression<Func<TEntity, bool>> predicate, PaginationReq pagination)
         {
-            bool isAsc = pagination.isAsc;
+            bool isAsc = pagination.IsAsc;
             string[] _order = pagination.Sidx.Split(',');
             MethodCallExpression resultExp = null;
+            var result = new Paging<TEntity>();
+
             var tempData = _dbContext.Set<TEntity>().Where(predicate);
             foreach (string item in _order)
             {
@@ -125,9 +134,14 @@ namespace MicroService.Basic.Data
                 resultExp = Expression.Call(typeof(Queryable), isAsc ? "OrderBy" : "OrderByDescending", new Type[] { typeof(TEntity), property.PropertyType }, tempData.Expression, Expression.Quote(orderByExp));
             }
             tempData = tempData.Provider.CreateQuery<TEntity>(resultExp);
-            pagination.TotalCount = tempData.Count();
             tempData = tempData.Skip(pagination.PageSize * (pagination.PageIndex - 1)).Take(pagination.PageSize).AsQueryable();
-            return await tempData.ToListAsync();
+
+            result.TotalCount = tempData.Count();
+            result.List = await tempData.ToListAsync();
+            result.PageIndex = pagination.PageIndex;
+            result.PageSize = pagination.PageSize;
+            return result;
+
         }
     }
 }

@@ -10,11 +10,14 @@ namespace MicroService.Common.Page
         /// <summary>
         /// 每页行数
         /// </summary>
-        public int PageSize { get; set; }
+        public int PageSize { get; set; } = 1;
         /// <summary>
         /// 当前页
         /// </summary>
-        public int PageIndex { get; set; }
+        public int PageIndex { get; set; } = 10;
+    } 
+    public class PaginationReq : Pagination
+    {
         /// <summary>
         /// 排序列
         /// </summary>
@@ -22,10 +25,11 @@ namespace MicroService.Common.Page
         /// <summary>
         /// 排序类型
         /// </summary>
-        public bool isAsc { get; set; }
-        /// <summary>
-        /// 总记录数
-        /// </summary>
-        public int TotalCount { get; set; } 
+        public bool IsAsc { get; set; }
+    }
+    public class Paging<T> : Pagination
+    {
+         public List<T> List { get; set; }
+         public int TotalCount { get; set; } 
     }
 }
