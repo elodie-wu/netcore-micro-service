@@ -11,6 +11,6 @@ namespace MicroService.Basic.Data.Infrastructure
         public DateTime CreateTime { get; set; } = DateTime.Now;
         public T LastModifyUserId { get; set; }
         public DateTime? LastModifyTime { get; set; }
-        public bool DeleteMark { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

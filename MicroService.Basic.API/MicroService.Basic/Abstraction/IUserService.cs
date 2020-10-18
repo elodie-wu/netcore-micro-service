@@ -12,7 +12,7 @@ namespace MicroService.Basic.Abstraction
     {
         Task<Paging<UserEntity>> GetList(UserListReq req);
         Task<UserEntity> GetInfo(string keyValue);
-        Task<bool> DeleteForm(string keyValue);
+        Task<bool> DeleteForm(string keyValue, string userID);
         Task<bool> SubmitForm(UserInfoReq req);
     }
 }

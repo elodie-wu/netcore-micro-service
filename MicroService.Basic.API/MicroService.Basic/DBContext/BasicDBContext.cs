@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using MicroService.Basic.Domain.Entity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,5 +15,6 @@ namespace MicroService.Basic.Data.DBContext
             //Database.Migrate();
 
         }
+        public DbSet<UserEntity> UserEntity { set; get; }
     }
 }

@@ -4,11 +4,18 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Autofac;
+using MicroService.Basic.Abstraction;
+using MicroService.Basic.Application;
 using MicroService.Basic.Data.DBContext;
+using MicroService.Basic.Domain.IRepository;
+using MicroService.Basic.Repository;
 using MicroService.Common.JWT;
+using MicroService.Common.Operator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -36,6 +43,15 @@ namespace MicroService.Basic.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddMvc();
+
+            #region ×¢Èë
+
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddTransient<IUserService, UserService>();
+            services.AddSingleton<IOperatorProvider, OperatorProvider>();
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
+            #endregion
 
             #region efcore
 

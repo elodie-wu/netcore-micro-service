@@ -18,15 +18,20 @@ namespace MicroService.Basic.Application
 
         public async Task<Paging<UserEntity>> GetList(UserListReq req)
         { 
-            return await _userRepository.FindListAsync(x=>x.Name.Contains(req.Name),req.pagination);
+            return await _userRepository.FindListAsync(x=> !x.IsDeleted,req.pagination);
         } 
         public async Task<UserEntity> GetInfo(string keyValue)
         {
             return await _userRepository.FindEntityAsync(keyValue);
         }
-        public async Task<bool> DeleteForm(string keyValue)
-        { 
-            return await _userRepository.DeleteAsync(keyValue);
+        public async Task<bool> DeleteForm(string keyValue,string userID)
+        {
+            var entity = await _userRepository.FindEntityAsync(keyValue);
+            entity.LastModifyTime = DateTime.Now;
+            entity.LastModifyUserId = userID;
+            entity.IsDeleted = true; 
+            return await _userRepository.UpdateAsync(entity);
+             
         }
         public async Task<bool> SubmitForm(UserInfoReq req)
         {
@@ -34,6 +39,7 @@ namespace MicroService.Basic.Application
             if (!string.IsNullOrEmpty(req.ID))
             {
                 var entity = await _userRepository.FindEntityAsync(req.ID);
+                entity.Name = req.Name; 
                 entity.LastModifyTime = DateTime.Now;
                 entity.LastModifyUserId = req.operatorID;
                 return await _userRepository.UpdateAsync(entity);
@@ -42,6 +48,7 @@ namespace MicroService.Basic.Application
             {
                 var entity = new UserEntity();
                 entity.ID = Guid.NewGuid().ToString();  
+                entity.Name = req.Name;  
                 entity.CreateUserId = req.operatorID;
                 return  await _userRepository.InsertAsync(entity);
             }
