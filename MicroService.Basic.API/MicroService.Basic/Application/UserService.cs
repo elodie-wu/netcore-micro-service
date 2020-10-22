@@ -1,9 +1,12 @@
-﻿using MicroService.Basic.Abstraction;
+﻿using AutoMapper;
+using MicroService.Basic.Abstraction;
 using MicroService.Basic.Domain.Entity;
 using MicroService.Basic.Domain.IRepository;
 using MicroService.Basic.DTO.Req;
+using MicroService.Basic.DTO.VM;
 using MicroService.Common.Page;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MicroService.Basic.Application
@@ -16,9 +19,10 @@ namespace MicroService.Basic.Application
             _userRepository = userRepository;
         }
 
-        public async Task<Paging<UserEntity>> GetList(UserListReq req)
+        public async Task<Paging<UserInfo>> GetList(UserListReq req)
         { 
-            return await _userRepository.FindListAsync(x=> !x.IsDeleted,req.pagination);
+            var entities =  await _userRepository.FindListAsync(x=> !x.IsDeleted,req.pagination); 
+            var result = Mapper.Map<List<UserEntity>, List<UserInfo>>(entities.List);
         } 
         public async Task<UserEntity> GetInfo(string keyValue)
         {

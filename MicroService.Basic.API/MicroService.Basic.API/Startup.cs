@@ -5,10 +5,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Autofac;
+using AutoMapper;
 using MicroService.Basic.Abstraction;
 using MicroService.Basic.Application;
 using MicroService.Basic.Data.DBContext;
 using MicroService.Basic.Domain.IRepository;
+using MicroService.Basic.DTO.AutoMapper;
 using MicroService.Basic.Repository;
 using MicroService.Common.JWT;
 using MicroService.Common.Operator;
@@ -120,6 +122,9 @@ namespace MicroService.Basic.API
                  };
              });
 
+            #endregion
+            #region automapper
+            services.AddAutoMapper(typeof(AutoMapperConfig));
             #endregion
 
             services.AddControllers();
