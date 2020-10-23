@@ -38,7 +38,7 @@ namespace MicroService.Basic.API
         {
             services.AddMvc();
 
-            #region 注入
+            #region di
 
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddTransient<IUserService, UserService>();
@@ -79,7 +79,7 @@ namespace MicroService.Basic.API
             });
             #endregion
 
-            #region jwt官方认证 
+            #region jwt
             var audienceConfig = Configuration.GetSection("Audience"); 
             var symmetricKeyAsBase64 = "asjdhfjkasdhkflhkashd";
             var keyByteArray = Encoding.ASCII.GetBytes(symmetricKeyAsBase64);
@@ -120,6 +120,18 @@ namespace MicroService.Basic.API
             services.AddAutoMapper(typeof(AutoMapperConfig));
             #endregion
 
+            #region cors
+            services.AddCors(options =>
+            {
+                options.AddPolicy("LimitRequests", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyMethod()
+                        .AllowAnyHeader();
+                });
+            });
+            #endregion
+
             services.AddControllers();
         }
 
@@ -145,6 +157,10 @@ namespace MicroService.Basic.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            #region cors 
+            app.UseCors("LimitRequests");
+            #endregion
 
             app.UseAuthentication();
             app.UseAuthorization();
