@@ -13,16 +13,26 @@ namespace MicroService.Basic.Application
 {
     public class UserService: IUserService
     {
-        readonly IUserRepository _userRepository; 
-        public UserService(IUserRepository userRepository)
+        readonly IMapper _mapper;
+        readonly IUserRepository _userRepository;
+
+        public UserService(IUserRepository userRepository, IMapper mapper)
         {
+            _mapper = mapper;
             _userRepository = userRepository;
         }
 
         public async Task<Paging<UserInfo>> GetList(UserListReq req)
         { 
-            var entities =  await _userRepository.FindListAsync(x=> !x.IsDeleted,req.pagination); 
-            var result = Mapper.Map<List<UserEntity>, List<UserInfo>>(entities.List);
+            var result =  await _userRepository.FindListAsync(x=> !x.IsDeleted,req.pagination); 
+            var entities = _mapper.Map<List<UserEntity>, List<UserInfo>>(result.List);
+            return new Paging<UserInfo>()
+            {
+                List = entities,
+                TotalCount = result.TotalCount,
+                PageIndex = result.PageIndex,
+                PageSize = result.PageSize
+            };
         } 
         public async Task<UserEntity> GetInfo(string keyValue)
         {

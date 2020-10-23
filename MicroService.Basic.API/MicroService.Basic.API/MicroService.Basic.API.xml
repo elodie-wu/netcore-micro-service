@@ -12,6 +12,36 @@
             <param name="password"></param>
             <returns></returns>
         </member>
+        <member name="P:MicroService.Basic.API.Controllers.ApiResult`1.Status">
+            <summary>
+            返回状态 1成功，0 失败
+            </summary>
+        </member>
+        <member name="P:MicroService.Basic.API.Controllers.ApiResult`1.Data">
+            <summary>
+            返回数据内容
+            </summary>
+        </member>
+        <member name="P:MicroService.Basic.API.Controllers.ApiResult`1.DataType">
+            <summary>
+            返回数据类型
+            </summary>
+        </member>
+        <member name="P:MicroService.Basic.API.Controllers.ApiResult`1.ErrorCode">
+            <summary>
+            返回数据错误码
+            </summary>
+        </member>
+        <member name="P:MicroService.Basic.API.Controllers.ApiResult`1.Msg">
+            <summary>
+            返回提醒信息
+            </summary>
+        </member>
+        <member name="P:MicroService.Basic.API.Controllers.ApiResult`1.ErrorSource">
+            <summary>
+            错误源
+            </summary>
+        </member>
         <member name="M:MicroService.Basic.API.Controllers.WeatherForecastController.Get">
             <summary>
             测试注释
