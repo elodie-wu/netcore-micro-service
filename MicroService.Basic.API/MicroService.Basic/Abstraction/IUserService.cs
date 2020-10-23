@@ -2,9 +2,6 @@
 using MicroService.Basic.DTO.Req;
 using MicroService.Basic.DTO.VM;
 using MicroService.Common.Page;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MicroService.Basic.Abstraction

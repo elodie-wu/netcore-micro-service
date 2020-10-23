@@ -1,10 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Autofac;
 using AutoMapper;
 using MicroService.Basic.Abstraction;
 using MicroService.Basic.Application;
@@ -12,23 +5,22 @@ using MicroService.Basic.Data.DBContext;
 using MicroService.Basic.Domain.IRepository;
 using MicroService.Basic.DTO.AutoMapper;
 using MicroService.Basic.Repository;
-using MicroService.Common.JWT;
 using MicroService.Common.Operator;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MySql.Data.EntityFrameworkCore.Extensions;
 using Swashbuckle.AspNetCore.Filters;
+using System.IO;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace MicroService.Basic.API
 {
@@ -123,6 +115,7 @@ namespace MicroService.Basic.API
              });
 
             #endregion
+
             #region automapper
             services.AddAutoMapper(typeof(AutoMapperConfig));
             #endregion
