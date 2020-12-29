@@ -190,7 +190,11 @@ namespace MicroService.Basic.API
                }); 
             app.UseHangfireDashboard();
             backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
+            backgroundJobs.Schedule(() => Console.WriteLine("Reliable!"), TimeSpan.FromDays(7));
+            RecurringJob.AddOrUpdate(() => Console.WriteLine("Transparent!"), Cron.Daily);
 
+            var id = backgroundJobs.Enqueue(() => Console.WriteLine("Hello, "));
+            backgroundJobs.ContinueWith(id, () => Console.WriteLine("world!"));
             #endregion 
 
             app.UseHttpsRedirection();
