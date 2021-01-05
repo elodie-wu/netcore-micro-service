@@ -20,10 +20,15 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using MySql.Data.EntityFrameworkCore.Extensions;
+using Serilog;
+using Serilog.Events;
+using Serilog.Sinks.Elasticsearch;
 using Swashbuckle.AspNetCore.Filters;
 using System;
 using System.Data;
 using System.IO;
+using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -159,6 +164,43 @@ namespace MicroService.Basic.API
 
             #endregion
 
+            #region serilog
+            ////init
+            //Log.Logger = new LoggerConfiguration()
+            //            .MinimumLevel.Debug()
+            //            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            //            .Enrich.FromLogContext()
+            //            .WriteTo.Console()
+            //            .CreateLogger();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                ////apm
+                //.Filter.ByExcluding(x =>
+                //{
+                //    return x.Properties.Values.Any(v =>
+                //        v.ToString().Contains("Microsoft.") ||
+                //        v.ToString().Contains("Elastic.Apm")
+                //        );
+                //})
+                //Elasticsearch 
+                .WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(new Uri(Configuration["DbConfig:ElasticSearch:ConnectionString"]))
+                    {
+                        //init
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+
+                        //
+                        ModifyConnectionSettings = c =>
+                            c.BasicAuthentication(Configuration["DbConfig:ElasticSearch:Auth:Username"],
+                                Configuration["DbConfig:ElasticSearch:Auth:Password"]),
+                        MinimumLogEventLevel = LogEventLevel.Information,
+                        IndexFormat = $"logs-{Assembly.GetEntryAssembly()?.GetName().Name ?? "UnRecognizedApp"}" + "-{0:yyyy.MM.dd}"
+                    })
+                .CreateLogger();
+            #endregion
+
             services.AddControllers();
         }
 
@@ -189,12 +231,20 @@ namespace MicroService.Basic.API
                    WorkerCount = 1
                }); 
             app.UseHangfireDashboard();
-            backgroundJobs.Enqueue(() => Console.WriteLine("Hello world from Hangfire!"));
-            backgroundJobs.Schedule(() => Console.WriteLine("Reliable!"), TimeSpan.FromDays(7));
-            RecurringJob.AddOrUpdate(() => Console.WriteLine("Transparent!"), Cron.Daily);
+            //支持基于队列的任务处理：任务执行不是同步的，而是放到一个持久化队列中，以便马上把请求控制权返回给调用者。
+            backgroundJobs.Enqueue(() => Console.WriteLine("队列执行1"));
+            backgroundJobs.Enqueue(() => Console.WriteLine("队列执行2"));
 
-            var id = backgroundJobs.Enqueue(() => Console.WriteLine("Hello, "));
-            backgroundJobs.ContinueWith(id, () => Console.WriteLine("world!"));
+            //延迟任务执行：不是马上调用方法，而是设定一个未来时间点再来执行，延迟作业仅执行一次
+            backgroundJobs.Schedule(() => Console.WriteLine("延时执行"), TimeSpan.FromMinutes(7));
+
+            //循环任务执行：一行代码添加重复执行的任务，其内置了常见的时间循环模式，也可基于CRON表达式来设定复杂的模式。【用的比较的多】 
+            RecurringJob.AddOrUpdate(() => Console.WriteLine("循环执行任务"), Cron.Minutely);//注意最小单位是分钟 
+
+            //延续性任务执行：类似于.NET中的Task,可以在第一个任务执行完之后紧接着再次执行另外的任务
+            var id = backgroundJobs.Enqueue(() => Console.WriteLine("延时执行11 "));
+            backgroundJobs.ContinueJobWith(id, () => Console.WriteLine("延时执行12"));
+
             #endregion 
 
             app.UseHttpsRedirection();
