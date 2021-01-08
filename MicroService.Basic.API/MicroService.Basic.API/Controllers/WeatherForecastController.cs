@@ -38,8 +38,9 @@ namespace MicroService.Basic.API.Controllers
                 Summary = Summaries[rng.Next(Summaries.Length)]
             })
             .ToArray();
-            
-            _logger.LogInformation($"测试 WeatherForecastController Get：{DateTime.Now}");
+            _logger.LogInformation($"测试 WeatherForecastController error Get：{DateTime.Now}");
+
+            _logger.LogError($"测试 WeatherForecastController info Get：{DateTime.Now}");
             return result;
         }
 

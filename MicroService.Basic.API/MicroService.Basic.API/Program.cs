@@ -18,8 +18,7 @@ namespace MicroService.Basic.API
         }
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
-            Host.CreateDefaultBuilder(args)
-                .UseSerilog(dispose:true) // <-- Add Serilog
+            Host.CreateDefaultBuilder(args) 
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
                     webBuilder.UseStartup<Startup>();

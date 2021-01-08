@@ -37,8 +37,46 @@ namespace MicroService.Basic.API
     public class Startup
     {
         public Startup(IConfiguration configuration)
-        {
+        { 
             Configuration = configuration;
+
+            #region init serilog 
+            ////init
+            //Log.Logger = new LoggerConfiguration()
+            //            .MinimumLevel.Debug()
+            //            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
+            //            .Enrich.FromLogContext()
+            //            .WriteTo.Console()
+            //            .CreateLogger();
+
+            Log.Logger = new LoggerConfiguration()
+                .Enrich.FromLogContext()
+                ////apm
+                //.Filter.ByExcluding(x =>
+                //{
+                //    return x.Properties.Values.Any(v =>
+                //        v.ToString().Contains("Microsoft.") ||
+                //        v.ToString().Contains("Elastic.Apm")
+                //        );
+                //})
+                //Elasticsearch 
+                .WriteTo.Elasticsearch(
+                    new ElasticsearchSinkOptions(new Uri(Configuration["DbConfig:ElasticSearch:ConnectionString"]))
+                    {
+                        //init
+                        AutoRegisterTemplate = true,
+                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
+
+                        //
+                        ModifyConnectionSettings = c =>
+                            c.BasicAuthentication(Configuration["DbConfig:ElasticSearch:Auth:Username"],
+                                Configuration["DbConfig:ElasticSearch:Auth:Password"]),
+                        MinimumLogEventLevel = LogEventLevel.Information,
+                        IndexFormat = $"logs-{Assembly.GetEntryAssembly()?.GetName().Name ?? "UnRecognizedApp"}" + "-{0:yyyy.MM.dd}"
+                    })
+                .CreateLogger();
+
+            #endregion
         }
 
         public IConfiguration Configuration { get; }
@@ -165,40 +203,7 @@ namespace MicroService.Basic.API
             #endregion
 
             #region serilog
-            ////init
-            //Log.Logger = new LoggerConfiguration()
-            //            .MinimumLevel.Debug()
-            //            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            //            .Enrich.FromLogContext()
-            //            .WriteTo.Console()
-            //            .CreateLogger();
-
-            Log.Logger = new LoggerConfiguration()
-                .Enrich.FromLogContext()
-                ////apm
-                //.Filter.ByExcluding(x =>
-                //{
-                //    return x.Properties.Values.Any(v =>
-                //        v.ToString().Contains("Microsoft.") ||
-                //        v.ToString().Contains("Elastic.Apm")
-                //        );
-                //})
-                //Elasticsearch 
-                .WriteTo.Elasticsearch(
-                    new ElasticsearchSinkOptions(new Uri(Configuration["DbConfig:ElasticSearch:ConnectionString"]))
-                    {
-                        //init
-                        AutoRegisterTemplate = true,
-                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-
-                        //
-                        ModifyConnectionSettings = c =>
-                            c.BasicAuthentication(Configuration["DbConfig:ElasticSearch:Auth:Username"],
-                                Configuration["DbConfig:ElasticSearch:Auth:Password"]),
-                        MinimumLogEventLevel = LogEventLevel.Information,
-                        IndexFormat = $"logs-{Assembly.GetEntryAssembly()?.GetName().Name ?? "UnRecognizedApp"}" + "-{0:yyyy.MM.dd}"
-                    })
-                .CreateLogger();
+            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true)); 
             #endregion
 
             services.AddControllers();
@@ -231,9 +236,9 @@ namespace MicroService.Basic.API
                    WorkerCount = 1
                }); 
             app.UseHangfireDashboard();
-            //支持基于队列的任务处理：任务执行不是同步的，而是放到一个持久化队列中，以便马上把请求控制权返回给调用者。
-            backgroundJobs.Enqueue(() => Console.WriteLine("队列执行1"));
-            backgroundJobs.Enqueue(() => Console.WriteLine("队列执行2"));
+            ////支持基于队列的任务处理：任务执行不是同步的，而是放到一个持久化队列中，以便马上把请求控制权返回给调用者。
+            //backgroundJobs.Enqueue(() => Console.WriteLine("队列执行1"));
+            //backgroundJobs.Enqueue(() => Console.WriteLine("队列执行2"));
 
             //延迟任务执行：不是马上调用方法，而是设定一个未来时间点再来执行，延迟作业仅执行一次
             backgroundJobs.Schedule(() => Console.WriteLine("延时执行"), TimeSpan.FromMinutes(7));
