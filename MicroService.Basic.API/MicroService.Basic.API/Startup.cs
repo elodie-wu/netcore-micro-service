@@ -22,6 +22,7 @@ using Microsoft.OpenApi.Models;
 using MySql.Data.EntityFrameworkCore.Extensions;
 using Serilog;
 using Serilog.Events;
+using Serilog.Formatting.Compact;
 using Serilog.Sinks.Elasticsearch;
 using Swashbuckle.AspNetCore.Filters;
 using System;
@@ -37,18 +38,11 @@ namespace MicroService.Basic.API
     public class Startup
     {
         public Startup(IConfiguration configuration)
-        { 
+        {
             Configuration = configuration;
 
             #region init serilog 
-            ////init
-            //Log.Logger = new LoggerConfiguration()
-            //            .MinimumLevel.Debug()
-            //            .MinimumLevel.Override("Microsoft", LogEventLevel.Information)
-            //            .Enrich.FromLogContext()
-            //            .WriteTo.Console()
-            //            .CreateLogger();
-
+            ////init 
             Log.Logger = new LoggerConfiguration()
                 .Enrich.FromLogContext()
                 ////apm
@@ -64,18 +58,14 @@ namespace MicroService.Basic.API
                     new ElasticsearchSinkOptions(new Uri(Configuration["DbConfig:ElasticSearch:ConnectionString"]))
                     {
                         //init
-                        AutoRegisterTemplate = true,
-                        AutoRegisterTemplateVersion = AutoRegisterTemplateVersion.ESv6,
-
-                        //
+                        AutoRegisterTemplate = true, 
                         ModifyConnectionSettings = c =>
                             c.BasicAuthentication(Configuration["DbConfig:ElasticSearch:Auth:Username"],
                                 Configuration["DbConfig:ElasticSearch:Auth:Password"]),
-                        MinimumLogEventLevel = LogEventLevel.Information,
-                        IndexFormat = $"logs-{Assembly.GetEntryAssembly()?.GetName().Name ?? "UnRecognizedApp"}" + "-{0:yyyy.MM.dd}"
+                        MinimumLogEventLevel = LogEventLevel.Information, 
                     })
                 .CreateLogger();
-
+             
             #endregion
         }
 
@@ -203,7 +193,7 @@ namespace MicroService.Basic.API
             #endregion
 
             #region serilog
-            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true)); 
+            services.AddLogging(loggingBuilder => loggingBuilder.AddSerilog(dispose: true));
             #endregion
 
             services.AddControllers();
@@ -234,7 +224,7 @@ namespace MicroService.Basic.API
                new BackgroundJobServerOptions
                {
                    WorkerCount = 1
-               }); 
+               });
             app.UseHangfireDashboard();
             ////支持基于队列的任务处理：任务执行不是同步的，而是放到一个持久化队列中，以便马上把请求控制权返回给调用者。
             //backgroundJobs.Enqueue(() => Console.WriteLine("队列执行1"));

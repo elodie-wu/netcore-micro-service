@@ -9,7 +9,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroService.Basic", "Micro
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroService.Common", "MicroService.Common\MicroService.Common.csproj", "{06A4B8F2-1EAB-4892-96D4-22339A90599C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroService.Basic.Data", "MicroService.Basic.Data\MicroService.Basic.Data.csproj", "{AA3D1AEC-DE96-45A8-8DFA-65A4723576D4}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MicroService.Basic.Data", "MicroService.Basic.Data\MicroService.Basic.Data.csproj", "{AA3D1AEC-DE96-45A8-8DFA-65A4723576D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MicroService.Basic.NUnitTest", "MicroService.Basic.NUnitTest\MicroService.Basic.NUnitTest.csproj", "{EF79D5C7-3C5F-45A3-9F4B-7F2994759153}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{AA3D1AEC-DE96-45A8-8DFA-65A4723576D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AA3D1AEC-DE96-45A8-8DFA-65A4723576D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AA3D1AEC-DE96-45A8-8DFA-65A4723576D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF79D5C7-3C5F-45A3-9F4B-7F2994759153}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF79D5C7-3C5F-45A3-9F4B-7F2994759153}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF79D5C7-3C5F-45A3-9F4B-7F2994759153}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF79D5C7-3C5F-45A3-9F4B-7F2994759153}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
